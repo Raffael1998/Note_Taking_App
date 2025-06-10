@@ -22,4 +22,3 @@ packages = ["note_app"]
 
 [tool.poetry]
 package-mode = false
-
