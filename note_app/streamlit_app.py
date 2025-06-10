@@ -22,7 +22,9 @@ def transcribe_audio(uploaded_file: Path | None, language: str) -> str:
     """Return transcribed text from an uploaded audio file."""
     if uploaded_file is None:
         return ""
-    with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as tmp:
+    with tempfile.NamedTemporaryFile(
+        delete=False, suffix=Path(uploaded_file.name).suffix
+    ) as tmp:
         tmp.write(uploaded_file.getbuffer())
         tmp_path = Path(tmp.name)
     try:
@@ -43,10 +45,15 @@ record_tab, query_tab, notes_tab, categories_tab = st.tabs(
 with record_tab:
     st.header("Record a new note")
     language = st.selectbox("Language", ["en", "fr"], index=0)
-    audio_file = st.file_uploader("Upload audio", type=["wav", "mp3", "m4a", "webm"])
+    mic_audio = st.audio_input("Record audio")
+    audio_file = st.file_uploader(
+        "Upload audio", type=["wav", "mp3", "m4a", "webm"], key="record_upload"
+    )
     text_input = st.text_area("Or enter text")
     if st.button("Add Note"):
-        if audio_file:
+        if mic_audio:
+            text = transcribe_audio(mic_audio, language)
+        elif audio_file:
             text = transcribe_audio(audio_file, language)
         else:
             text = text_input.strip()
@@ -61,11 +68,18 @@ with record_tab:
 
 with query_tab:
     st.header("Query notes")
-    language = st.selectbox("Language", ["en", "fr"], index=0, key="query_lang")
-    audio_query = st.file_uploader("Upload audio", type=["wav", "mp3", "m4a", "webm"], key="query_audio")
+    language = st.selectbox(
+        "Language", ["en", "fr"], index=0, key="query_lang"
+    )
+    mic_query = st.audio_input("Record query", key="query_mic")
+    audio_query = st.file_uploader(
+        "Upload audio", type=["wav", "mp3", "m4a", "webm"], key="query_audio"
+    )
     query_text = st.text_input("Or type your query", key="query_text")
     if st.button("Search"):
-        if audio_query:
+        if mic_query:
+            query = transcribe_audio(mic_query, language)
+        elif audio_query:
             query = transcribe_audio(audio_query, language)
         else:
             query = query_text.strip()
@@ -85,14 +99,20 @@ with notes_tab:
     content = Path("notes.txt").read_text(encoding="utf-8")
     edited = st.text_area("Notes", value=content, height=300)
     if st.button("Save Notes"):
-        Path("notes.txt").write_text(edited.replace("\r\n", "\n"), encoding="utf-8")
+        Path("notes.txt").write_text(
+            edited.replace("\r\n", "\n"), encoding="utf-8"
+        )
         st.success("Notes saved")
 
 
 with categories_tab:
     st.header("Edit categories.txt")
     content = Path("categories.txt").read_text(encoding="utf-8")
-    edited = st.text_area("Categories", value=content, height=300, key="cat_text")
+    edited = st.text_area(
+        "Categories", value=content, height=300, key="cat_text"
+    )
     if st.button("Save Categories"):
-        Path("categories.txt").write_text(edited.replace("\r\n", "\n"), encoding="utf-8")
+        Path("categories.txt").write_text(
+            edited.replace("\r\n", "\n"), encoding="utf-8"
+        )
         st.success("Categories saved")
