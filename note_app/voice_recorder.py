@@ -14,34 +14,38 @@ class VoiceRecorder:
 
     def _record_audio(self) -> sr.AudioData:
         """Record audio until the user presses Enter again."""
-        with sr.Microphone() as source:
-            chunks: List[sr.AudioData] = []
+        # The ``listen_in_background`` method internally manages the microphone
+        # context, so ``sr.Microphone`` should not be wrapped in a ``with``
+        # statement here. Doing so would result in nested context managers and
+        # raise ``AssertionError: This audio source is already inside a context
+        # manager``.
+        source = sr.Microphone()
 
-            def callback(_: sr.Recognizer, audio: sr.AudioData) -> None:
-                chunks.append(audio)
+        chunks: List[sr.AudioData] = []
 
-            print("Press Enter to start recording...")
-            input()
-            print("Recording... press Enter to stop.")
+        def callback(_: sr.Recognizer, audio: sr.AudioData) -> None:
+            chunks.append(audio)
 
-            stop_listening = self.recognizer.listen_in_background(
-                source, callback
-            )
-            input()
-            stop_listening(wait_for_stop=False)
+        print("Press Enter to start recording...")
+        input()
+        print("Recording... press Enter to stop.")
 
-            if not chunks:
-                raise RuntimeError("No audio captured")
+        stop_listening = self.recognizer.listen_in_background(source, callback)
+        input()
+        stop_listening(wait_for_stop=False)
 
-            sample_rate = chunks[0].sample_rate
-            sample_width = chunks[0].sample_width
-            raw_data = b"".join(chunk.get_raw_data() for chunk in chunks)
-            audio = sr.AudioData(raw_data, sample_rate, sample_width)
+        if not chunks:
+            raise RuntimeError("No audio captured")
 
-            with open(self.save_path, "wb") as f:
-                f.write(audio.get_wav_data())
+        sample_rate = chunks[0].sample_rate
+        sample_width = chunks[0].sample_width
+        raw_data = b"".join(chunk.get_raw_data() for chunk in chunks)
+        audio = sr.AudioData(raw_data, sample_rate, sample_width)
 
-            return audio
+        with open(self.save_path, "wb") as f:
+            f.write(audio.get_wav_data())
+
+        return audio
 
     def record_text(self) -> str:
         """Record from the microphone and return transcribed text."""
