@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import tempfile
 
 from flask import Flask, render_template, request, redirect, jsonify
 
@@ -29,7 +30,9 @@ def record() -> str | dict:
     if not audio_file:
         return jsonify({'message': 'No audio received'}), 400
     language = request.form.get('language', 'en')
-    save_path = Path('web_recording.webm')
+    fd, tmp = tempfile.mkstemp(suffix='.webm')
+    os.close(fd)
+    save_path = Path(tmp)
     audio_file.save(save_path)
     audio_file.close()
     try:
@@ -57,7 +60,9 @@ def query() -> str | dict:
     if 'audio' in request.files:
         audio_file = request.files['audio']
         language = request.form.get('language', 'en')
-        save_path = Path('query_recording.webm')
+        fd, tmp = tempfile.mkstemp(suffix='.webm')
+        os.close(fd)
+        save_path = Path(tmp)
         audio_file.save(save_path)
         audio_file.close()
         try:
