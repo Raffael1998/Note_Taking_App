@@ -11,7 +11,7 @@ This project is a simple Python application that records voice notes, summarizes
 Install dependencies with:
 
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 Set your OpenAI API key in the environment:
