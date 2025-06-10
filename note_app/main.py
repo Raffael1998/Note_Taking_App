@@ -43,21 +43,45 @@ def main() -> None:
     )
 
     query_parser = subparsers.add_parser("query", help="Query existing notes")
-    query_parser.add_argument("prompt", help="Question about your notes")
+    query_parser.add_argument(
+        "prompt",
+        nargs="?",
+        help="Question about your notes",
+    )
+    query_parser.add_argument(
+        "--voice",
+        "-v",
+        action="store_true",
+        help="Speak your query instead of typing",
+    )
+    query_parser.add_argument(
+        "--language",
+        "-l",
+        choices=["en", "fr"],
+        default="en",
+        help="Recording language: en or fr",
+    )
 
     args = parser.parse_args()
 
     llm = LLMInterface()
     notes = NoteManager()
-    language_code = "fr-FR" if getattr(args, "language", "en") == "fr" else "en-US"
+    language_code = "fr-FR" if args.language == "fr" else "en-US"
     recorder = VoiceRecorder(language=language_code)
 
-    commands: dict[str, Callable[..., None]] = {
-        "record": lambda: record_note(llm, notes, recorder),
-        "query": lambda: query_notes(llm, notes, args.prompt),
-    }
-
-    commands[args.command]()
+    if args.command == "record":
+        record_note(llm, notes, recorder)
+    elif args.command == "query":
+        if args.voice:
+            query_text = recorder.record_text()
+            if not query_text:
+                print("Could not understand audio.")
+                return
+        else:
+            if args.prompt is None:
+                parser.error("You must provide a prompt or use --voice")
+            query_text = args.prompt
+        query_notes(llm, notes, query_text)
 
 
 if __name__ == "__main__":
