@@ -8,24 +8,44 @@ from .note_manager import NoteManager
 from .voice_recorder import VoiceRecorder
 
 
-def record_note(llm: LLMInterface, notes: NoteManager, recorder: VoiceRecorder) -> None:
-    """Record a note using the microphone and store a summarized version."""
+def record_note(
+    llm: LLMInterface, notes: NoteManager, recorder: VoiceRecorder
+) -> None:
+    """Record a note, infer its category and store a summarized version."""
     text = recorder.record_text()
     if not text:
         print("Could not understand audio.")
         return
     summary = llm.summarize(text)
-    notes.add_note(summary)
-    print("Note added:", summary)
+    category = llm.infer_category(text)
+    notes.add_note(summary, category=category)
+    print("Note added:", f"[{category}] {summary}")
 
 
-def query_notes(llm: LLMInterface, notes: NoteManager, query: str) -> None:
-    """Query existing notes via the LLM."""
+def query_notes(
+    llm: LLMInterface,
+    notes: NoteManager,
+    recorder: VoiceRecorder,
+    query: str | None,
+    use_voice: bool,
+) -> None:
+    """Query existing notes via the LLM. Uses voice input when requested."""
+
+    if use_voice:
+        query_text = recorder.record_text()
+        if not query_text:
+            print("Could not understand audio.")
+            return
+    else:
+        if query is None:
+            raise ValueError("Query text is required when not using voice")
+        query_text = query
+
     note_text = notes.read_notes()
     if not note_text.strip():
         print("No notes found.")
         return
-    result = llm.query_notes(note_text, query)
+    result = llm.query_notes(note_text, query_text)
     print("Query result:\n", result)
 
 
@@ -72,16 +92,9 @@ def main() -> None:
     if args.command == "record":
         record_note(llm, notes, recorder)
     elif args.command == "query":
-        if args.voice:
-            query_text = recorder.record_text()
-            if not query_text:
-                print("Could not understand audio.")
-                return
-        else:
-            if args.prompt is None:
-                parser.error("You must provide a prompt or use --voice")
-            query_text = args.prompt
-        query_notes(llm, notes, query_text)
+        if not args.voice and args.prompt is None:
+            parser.error("You must provide a prompt or use --voice")
+        query_notes(llm, notes, recorder, args.prompt, args.voice)
 
 
 if __name__ == "__main__":
