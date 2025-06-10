@@ -11,8 +11,7 @@ override it with `--language en`.
 
 - Python 3.10+
  - `openai` for interacting with the LLM and transcribing audio
- - `speechrecognition` for microphone input
-- `pyaudio` for microphone access
+- `sounddevice` and `soundfile` for recording audio
 - `python-dotenv` for loading environment variables
 
 Install dependencies with:
@@ -21,9 +20,9 @@ Install dependencies with:
 pip install .
 ```
 
-If the installation fails on Windows, download a prebuilt PyAudio wheel from
-[the unofficial binaries site](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
-and install it with `pip install <wheel-filename>`.
+If installation fails for the audio libraries on Windows, grab prebuilt wheels
+from [the unofficial binaries site](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
+and install them with `pip install <wheel-filename>`.
 
 The `pip install` command will create `build/` and `*.egg-info` folders. These
 are ignored by Git via `.gitignore` and can be safely deleted if desired.
