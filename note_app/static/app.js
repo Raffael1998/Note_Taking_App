@@ -1,9 +1,19 @@
-// Recording functionality
-const recordBtn = document.getElementById('record-btn');
-if (recordBtn) {
+// Language selector
+const langSelect = document.getElementById('language-select');
+if (langSelect) {
+  const saved = localStorage.getItem('language') || 'en';
+  langSelect.value = saved;
+  langSelect.addEventListener('change', () => {
+    localStorage.setItem('language', langSelect.value);
+  });
+}
+
+function setupRecorder(buttonId, endpoint, resultId) {
+  const btn = document.getElementById(buttonId);
+  if (!btn) return;
   let mediaRecorder;
   let chunks = [];
-  recordBtn.addEventListener('click', async () => {
+  btn.addEventListener('click', async () => {
     if (!mediaRecorder || mediaRecorder.state === 'inactive') {
       chunks = [];
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -11,24 +21,32 @@ if (recordBtn) {
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
-        document.getElementById('status').textContent = 'Transcribing...';
         const fd = new FormData();
         fd.append('audio', blob, 'recording.webm');
-        const resp = await fetch('/record', { method: 'POST', body: fd });
+        fd.append('language', localStorage.getItem('language') || 'en');
+        const resp = await fetch(endpoint, { method: 'POST', body: fd });
         const data = await resp.json();
-        document.getElementById('status').textContent = '';
-        document.getElementById('result').textContent = data.message;
+        btn.classList.remove('btn-danger');
+        btn.textContent = btn.dataset.original;
+        const resultEl = document.getElementById(resultId);
+        if (resultEl) resultEl.textContent = data.message || data.result;
       };
       mediaRecorder.start();
-      recordBtn.textContent = 'Stop Recording';
+      btn.dataset.original = btn.textContent;
+      btn.textContent = 'Recording... Press again to stop';
+      btn.classList.add('btn-danger');
     } else {
       mediaRecorder.stop();
-      recordBtn.textContent = 'Start Recording';
     }
   });
 }
 
-// Query functionality
+const recordResultId = document.getElementById('record-result') ? 'record-result' : 'result';
+const queryResultId = document.getElementById('query-result') ? 'query-result' : 'result';
+setupRecorder('record-btn', '/record', recordResultId);
+setupRecorder('query-btn', '/query', queryResultId);
+
+// Fallback typed query form
 const queryForm = document.getElementById('query-form');
 if (queryForm) {
   queryForm.addEventListener('submit', async (e) => {
@@ -40,6 +58,7 @@ if (queryForm) {
       body: JSON.stringify({ query })
     });
     const data = await resp.json();
-    document.getElementById('query-result').textContent = data.result;
+    const resultEl = document.getElementById('query-result') || document.getElementById('result');
+    if (resultEl) resultEl.textContent = data.result;
   });
 }

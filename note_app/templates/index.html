@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="d-grid gap-3 mt-4">
-  <a href="/record" class="btn btn-primary btn-lg">Record Note</a>
-  <a href="/query" class="btn btn-secondary btn-lg">Query Notes</a>
+  <button id="record-btn" class="btn btn-primary btn-lg">Record Note</button>
+  <div id="record-result" class="mt-2"></div>
+  <button id="query-btn" class="btn btn-secondary btn-lg">Query Notes</button>
+  <div id="query-result" class="mt-2"></div>
 </div>
 {% endblock %}
