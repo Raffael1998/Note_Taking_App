@@ -32,10 +32,9 @@ def record() -> str | dict:
     save_path = Path('web_recording.webm')
     audio_file.save(save_path)
     try:
-        lang = language
         with open(save_path, 'rb') as f:
             response = recorder.client.audio.transcriptions.create(
-                model='whisper-1', file=f, language=lang
+                model='whisper-1', file=f, language=language
             )
         text = response.text.strip()
         summary = llm.summarize(text)
@@ -43,6 +42,8 @@ def record() -> str | dict:
         notes.add_note(summary, category=category)
         message = f"Note added: [{category}] {summary}"
         return jsonify({'message': message})
+    except Exception as exc:
+        return jsonify({'message': str(exc)}), 500
     finally:
         if save_path.exists():
             os.remove(save_path)
@@ -63,6 +64,8 @@ def query() -> str | dict:
                     model='whisper-1', file=f, language=language
                 )
             query_text = response.text.strip()
+        except Exception as exc:
+            return jsonify({'result': str(exc)}), 500
         finally:
             if save_path.exists():
                 os.remove(save_path)
