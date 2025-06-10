@@ -28,13 +28,14 @@ def record() -> str | dict:
     audio_file = request.files.get('audio')
     if not audio_file:
         return jsonify({'message': 'No audio received'}), 400
+    language = request.form.get('language', 'en')
     save_path = Path('web_recording.webm')
     audio_file.save(save_path)
+    audio_file.close()
     try:
-        lang = recorder.language.split('-')[0]
         with open(save_path, 'rb') as f:
             response = recorder.client.audio.transcriptions.create(
-                model='whisper-1', file=f, language=lang
+                model='whisper-1', file=f, language=language
             )
         text = response.text.strip()
         summary = llm.summarize(text)
@@ -42,6 +43,8 @@ def record() -> str | dict:
         notes.add_note(summary, category=category)
         message = f"Note added: [{category}] {summary}"
         return jsonify({'message': message})
+    except Exception as exc:
+        return jsonify({'message': str(exc)}), 500
     finally:
         if save_path.exists():
             os.remove(save_path)
@@ -51,13 +54,33 @@ def record() -> str | dict:
 def query() -> str | dict:
     if request.method == 'GET':
         return render_template('query.html')
-    data = request.get_json()
-    if not data or 'query' not in data:
-        return jsonify({'result': 'No query provided'}), 400
+    if 'audio' in request.files:
+        audio_file = request.files['audio']
+        language = request.form.get('language', 'en')
+        save_path = Path('query_recording.webm')
+        audio_file.save(save_path)
+        audio_file.close()
+        try:
+            with open(save_path, 'rb') as f:
+                response = recorder.client.audio.transcriptions.create(
+                    model='whisper-1', file=f, language=language
+                )
+            query_text = response.text.strip()
+        except Exception as exc:
+            return jsonify({'result': str(exc)}), 500
+        finally:
+            if save_path.exists():
+                os.remove(save_path)
+    else:
+        data = request.get_json()
+        if not data or 'query' not in data:
+            return jsonify({'result': 'No query provided'}), 400
+        query_text = data['query']
+
     note_text = notes.read_notes()
     if not note_text.strip():
         return jsonify({'result': 'No notes found'})
-    result = llm.query_notes(note_text, data['query'])
+    result = llm.query_notes(note_text, query_text)
     return jsonify({'result': result})
 
 

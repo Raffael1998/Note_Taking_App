@@ -44,8 +44,8 @@ Record a new voice note (English):
 python -m note_app.main record
 ```
 Categories are inferred automatically from the note text.
-The recorder now waits for you to press **Enter** to start and again to stop,
-so it won't cut you off mid-sentence.
+Recording starts immediately and you press **Enter** to stop so it won't cut you
+off mid-sentence.
 
 For French use:
 
@@ -85,11 +85,14 @@ You can run a simple web interface using Flask:
 python -m note_app.web_app
 ```
 
-Open <http://localhost:5000> in your browser. The site has two main actions:
+Open <http://localhost:5000> in your browser. Use the language selector in the
+navigation bar to choose between English and French transcription. The main page
+lets you record notes or voice queries directly without navigating to a new
+screen. Click once to start recording and again to stop. While recording the
+button turns red and shows "Recording...".
 
-- **Record Note** – record directly in the browser. The audio is sent to the
-  server, transcribed using Whisper and saved like the command line version.
-- **Query Notes** – ask questions about your notes.
+The sidebar still provides pages to edit `notes.txt` and `categories.txt`
+directly in the browser.
 
 The sidebar lets you edit `notes.txt` and `categories.txt` directly in the
 browser. The layout uses Bootstrap so it works well on mobile devices.
