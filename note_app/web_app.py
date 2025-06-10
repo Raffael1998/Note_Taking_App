@@ -86,7 +86,8 @@ def query() -> str | dict:
 
 def _edit_file(path: Path, content: str | None) -> str:
     if content is not None:
-        path.write_text(content, encoding='utf-8')
+        normalized = content.replace('\r\n', '\n')
+        path.write_text(normalized, encoding='utf-8')
     return path.read_text(encoding='utf-8')
 
 
