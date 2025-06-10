@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2 class="mt-4">Query Notes</h2>
+<form id="query-form" class="mt-3">
+  <div class="mb-3">
+    <input type="text" class="form-control" id="query" placeholder="Enter your question">
+  </div>
+  <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+<div id="query-result" class="mt-3"></div>
+{% endblock %}

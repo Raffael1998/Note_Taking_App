@@ -77,6 +77,23 @@ Notes are stored in `notes.txt` in the project directory.
 The list of possible categories is read from `categories.txt`. Edit this file to
 control how your notes are classified.
 
+## Web Interface
+
+You can run a simple web interface using Flask:
+
+```bash
+python -m note_app.web_app
+```
+
+Open <http://localhost:5000> in your browser. The site has two main actions:
+
+- **Record Note** – record directly in the browser. The audio is sent to the
+  server, transcribed using Whisper and saved like the command line version.
+- **Query Notes** – ask questions about your notes.
+
+The sidebar lets you edit `notes.txt` and `categories.txt` directly in the
+browser. The layout uses Bootstrap so it works well on mobile devices.
+
 ## Testing the OpenAI API
 
 You can verify your API key and connectivity by running:

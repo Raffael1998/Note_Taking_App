@@ -13,5 +13,6 @@ dependencies = [
     "SpeechRecognition>=3.10.0",
     "PyAudio>=0.2.14",
     "python-dotenv>=1.0.0",
+    "Flask>=2.2.0",
 ]
 
