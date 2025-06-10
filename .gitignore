@@ -3,3 +3,4 @@ notes.txt
 .env
 build/
 *.egg-info/
+*.wav
