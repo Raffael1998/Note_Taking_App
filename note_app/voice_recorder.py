@@ -9,9 +9,10 @@ import speech_recognition as sr
 class VoiceRecorder:
     """Record audio from the microphone and convert it to text."""
 
-    def __init__(self, save_path: str = "last_recording.wav") -> None:
+    def __init__(self, save_path: str = "last_recording.wav", language: str = "en-US") -> None:
         self.recognizer = sr.Recognizer()
         self.save_path = save_path
+        self.language = language
 
     def _record_audio(self) -> sr.AudioData:
         """Record audio after the user presses Enter to start and stop."""
@@ -51,6 +52,7 @@ class VoiceRecorder:
 
             with open(self.save_path, "wb") as file:
                 file.write(audio_data.get_wav_data())
+            print(f"Audio saved to {self.save_path}")
 
             return audio_data
 
@@ -58,7 +60,9 @@ class VoiceRecorder:
         """Record from the microphone and return transcribed text."""
         audio = self._record_audio()
         try:
-            return self.recognizer.recognize_google(audio)
+            text = self.recognizer.recognize_google(audio, language=self.language)
+            print(f"[DEBUG] Recognized text: {text}")
+            return text
         except sr.UnknownValueError:
             return ""
         except sr.RequestError as exc:
