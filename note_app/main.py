@@ -3,10 +3,10 @@ from __future__ import annotations
 import argparse
 from typing import Callable
 
-from .llm_interface import LLMInterface
-from .note_manager import NoteManager
-from .voice_recorder import VoiceRecorder
-from .categories import load_categories
+from note_app.llm_interface import LLMInterface
+from note_app.note_manager import NoteManager
+from note_app.categories import load_categories
+from note_app.voice_recorder import VoiceRecorder
 
 
 def record_note(

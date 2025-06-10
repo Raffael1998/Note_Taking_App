@@ -6,10 +6,10 @@ import tempfile
 
 from flask import Flask, render_template, request, redirect, jsonify
 
-from .llm_interface import LLMInterface
-from .note_manager import NoteManager
-from .categories import load_categories
-from .voice_recorder import VoiceRecorder
+from note_app.llm_interface import LLMInterface
+from note_app.note_manager import NoteManager
+from note_app.categories import load_categories
+from note_app.voice_recorder import VoiceRecorder
 
 app = Flask(__name__)
 llm = LLMInterface()
