@@ -39,7 +39,11 @@ function setupRecorder(buttonId, endpoint, resultId) {
           btn.textContent = btn.dataset.original;
         }
         const resultEl = document.getElementById(resultId);
-        if (resultEl) resultEl.textContent = data.message || data.result || '';
+        if (resultEl) {
+          let msg = data.message || data.result || '';
+          if (data.debug) msg += '\n' + data.debug;
+          resultEl.textContent = msg;
+        }
         mediaRecorder = null;
       };
       mediaRecorder.start();
@@ -72,6 +76,10 @@ if (queryForm) {
     });
     const data = await resp.json();
     const resultEl = document.getElementById('query-result') || document.getElementById('result');
-    if (resultEl) resultEl.textContent = data.result;
+    if (resultEl) {
+      let msg = data.message || data.result || '';
+      if (data.debug) msg += '\n' + data.debug;
+      resultEl.textContent = msg;
+    }
   });
 }
