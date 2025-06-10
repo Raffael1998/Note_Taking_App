@@ -1,6 +1,14 @@
 import os
+import sys
 import tempfile
 from pathlib import Path
+
+# Ensure the project root is on the Python path when running via
+# ``streamlit run note_app/streamlit_app.py``. Streamlit executes the script
+# as a file which sets ``sys.path[0]`` to this directory (``note_app``),
+# causing ``import note_app`` to fail. Adding the parent directory allows
+# imports to succeed without requiring an installed package.
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import streamlit as st
 
