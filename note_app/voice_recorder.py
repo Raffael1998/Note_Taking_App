@@ -23,13 +23,11 @@ class VoiceRecorder:
         self.client = OpenAI(api_key=api_key)
 
     def _record_audio(self) -> sr.AudioData:
-        """Record audio after the user presses Enter to start and stop."""
+        """Record audio until the user presses Enter to stop."""
         with sr.Microphone() as source:
             print("Calibrating ambient noise...")
             self.recognizer.adjust_for_ambient_noise(source, duration=1)
 
-            print("Press Enter to start recording...")
-            input()
             print("Recording... press Enter to stop.")
 
             stop_event = Event()
