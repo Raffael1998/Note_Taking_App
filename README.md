@@ -74,6 +74,9 @@ As with recording, add `--language fr` to recognise French speech.
 
 Notes are stored in `notes.txt` in the project directory.
 
+The list of possible categories is read from `categories.txt`. Edit this file to
+control how your notes are classified.
+
 ## Testing the OpenAI API
 
 You can verify your API key and connectivity by running:

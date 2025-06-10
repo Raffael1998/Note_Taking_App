@@ -35,12 +35,21 @@ class LLMInterface:
         )
         return response.choices[0].message.content.strip()
 
-    def infer_category(self, text: str) -> str:
-        """Return a short category describing the text."""
-        prompt = (
-            "Provide a concise category for the following note. "
-            "Respond with only a short phrase." 
-        )
+    def infer_category(self, text: str, categories: list[str] | None = None) -> str:
+        """Return the best matching category for the text."""
+        if categories:
+            category_list = "\n".join(categories)
+            prompt = (
+                "Select the most appropriate category for the following note "
+                "from this list. If nothing fits, answer 'Other'.\n"
+                f"Categories:\n{category_list}"
+            )
+        else:
+            prompt = (
+                "Provide a concise category for the following note. "
+                "Respond with only a short phrase."
+            )
+
         messages = [
             {"role": "system", "content": prompt},
             {"role": "user", "content": text},

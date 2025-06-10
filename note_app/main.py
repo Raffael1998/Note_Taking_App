@@ -6,6 +6,7 @@ from typing import Callable
 from .llm_interface import LLMInterface
 from .note_manager import NoteManager
 from .voice_recorder import VoiceRecorder
+from .categories import load_categories
 
 
 def record_note(
@@ -17,7 +18,8 @@ def record_note(
         print("Could not understand audio.")
         return
     summary = llm.summarize(text)
-    category = llm.infer_category(text)
+    categories = load_categories()
+    category = llm.infer_category(text, categories)
     notes.add_note(summary, category=category)
     print("Note added:", f"[{category}] {summary}")
 
