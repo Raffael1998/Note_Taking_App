@@ -44,8 +44,8 @@ Record a new voice note (English):
 python -m note_app.main record
 ```
 Categories are inferred automatically from the note text.
-The recorder now waits for you to press **Enter** to start and again to stop,
-so it won't cut you off mid-sentence.
+Recording starts immediately and you press **Enter** to stop so it won't cut you
+off mid-sentence.
 
 For French use:
 

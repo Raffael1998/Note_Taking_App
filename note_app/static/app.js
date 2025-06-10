@@ -13,29 +13,42 @@ function setupRecorder(buttonId, endpoint, resultId) {
   if (!btn) return;
   let mediaRecorder;
   let chunks = [];
+  let stream;
+
   btn.addEventListener('click', async () => {
     if (!mediaRecorder || mediaRecorder.state === 'inactive') {
       chunks = [];
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.ondataavailable = e => chunks.push(e.data);
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
-        const fd = new FormData();
-        fd.append('audio', blob, 'recording.webm');
-        fd.append('language', localStorage.getItem('language') || 'en');
-        const resp = await fetch(endpoint, { method: 'POST', body: fd });
-        const data = await resp.json();
-        btn.classList.remove('btn-danger');
-        btn.textContent = btn.dataset.original;
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        let data = {};
+        try {
+          const fd = new FormData();
+          fd.append('audio', blob, 'recording.webm');
+          fd.append('language', localStorage.getItem('language') || 'en');
+          const resp = await fetch(endpoint, { method: 'POST', body: fd });
+          data = await resp.json();
+        } catch (err) {
+          console.error('Upload failed', err);
+          data = { message: 'Error processing recording' };
+        } finally {
+          btn.classList.remove('btn-danger');
+          btn.textContent = btn.dataset.original;
+        }
         const resultEl = document.getElementById(resultId);
-        if (resultEl) resultEl.textContent = data.message || data.result;
+        if (resultEl) resultEl.textContent = data.message || data.result || '';
+        mediaRecorder = null;
       };
       mediaRecorder.start();
       btn.dataset.original = btn.textContent;
       btn.textContent = 'Recording... Press again to stop';
       btn.classList.add('btn-danger');
     } else {
+      btn.classList.remove('btn-danger');
+      btn.textContent = btn.dataset.original;
       mediaRecorder.stop();
     }
   });
