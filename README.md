@@ -40,6 +40,12 @@ Record a new voice note:
 ```bash
 python -m note_app.main record
 ```
+The recorder now waits for you to press **Enter** to start and again to stop,
+so it won't cut you off mid-sentence. 
+
+During recording a file named `latest_recording.wav` is saved in the project
+directory. This contains the raw audio that is sent to the LLM, which can be
+useful for debugging.
 
 Query notes:
 
