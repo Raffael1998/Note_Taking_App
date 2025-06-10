@@ -1,7 +1,7 @@
-Courses supermarché
-Courses magasin spécifique
+Achats au supermarché
+Achats en magasin spécifique
 Idées de blagues
 Idées de jeux
 Idées de création
 Tâches pour le travail
-Tâches de la vie quotidienne
+Rappel pour la vie perso
