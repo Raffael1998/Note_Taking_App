@@ -60,7 +60,7 @@ def main() -> None:
         "--language",
         "-l",
         choices=["en", "fr"],
-        default="en",
+        default="fr",
         help="Recording language: en or fr",
     )
 
@@ -80,7 +80,7 @@ def main() -> None:
         "--language",
         "-l",
         choices=["en", "fr"],
-        default="en",
+        default="fr",
         help="Recording language: en or fr",
     )
 

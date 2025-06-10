@@ -12,7 +12,7 @@ from openai import OpenAI
 class VoiceRecorder:
     """Record audio from the microphone and convert it to text."""
 
-    def __init__(self, save_path: str = "last_recording.wav", language: str = "en-US") -> None:
+    def __init__(self, save_path: str = "last_recording.wav", language: str = "fr-FR") -> None:
         self.recognizer = sr.Recognizer()
         self.save_path = save_path
         self.language = language

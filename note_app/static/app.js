@@ -1,7 +1,7 @@
 // Language selector
 const langSelect = document.getElementById('language-select');
 if (langSelect) {
-  const saved = localStorage.getItem('language') || 'en';
+  const saved = localStorage.getItem('language') || 'fr';
   langSelect.value = saved;
   langSelect.addEventListener('change', () => {
     localStorage.setItem('language', langSelect.value);
@@ -28,7 +28,7 @@ function setupRecorder(buttonId, endpoint, resultId) {
         try {
           const fd = new FormData();
           fd.append('audio', blob, 'recording.webm');
-          fd.append('language', localStorage.getItem('language') || 'en');
+          fd.append('language', localStorage.getItem('language') || 'fr');
           const resp = await fetch(endpoint, { method: 'POST', body: fd });
           data = await resp.json();
         } catch (err) {

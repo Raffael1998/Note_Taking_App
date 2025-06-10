@@ -4,8 +4,8 @@ This project is a simple Python application that records voice notes, summarizes
 
 The application defaults to the `gpt-4.1-nano` model for all LLM calls.
 When recording or querying by voice you can choose between English and French
-transcription using OpenAI's Whisper API. Use the `--language` option with
-either `en` (default) or `fr`.
+transcription using OpenAI's Whisper API. French is used by default, but you can
+override it with `--language en`.
 
 ## Requirements
 
@@ -38,7 +38,7 @@ The application will automatically load this file using `python-dotenv`.
 
 ## Usage
 
-Record a new voice note (English):
+Record a new voice note (French):
 
 ```bash
 python -m note_app.main record
@@ -47,10 +47,10 @@ Categories are inferred automatically from the note text.
 Recording starts immediately and you press **Enter** to stop so it won't cut you
 off mid-sentence.
 
-For French use:
+For English use:
 
 ```bash
-python -m note_app.main record --language fr
+python -m note_app.main record --language en
 ```
 
 During recording a file named `last_recording.wav` is saved in the project
@@ -70,7 +70,7 @@ You can also speak the query instead of typing:
 python -m note_app.main query --voice
 ```
 
-As with recording, add `--language fr` to recognise French speech.
+As with recording, add `--language en` to recognise English speech.
 
 Notes are stored in `notes.txt` in the project directory.
 
@@ -87,8 +87,8 @@ streamlit run note_app/streamlit_app.py
 
 Open the provided URL in your browser. The interface offers tabs to record new
 notes, query existing ones and edit `notes.txt` or `categories.txt` directly in
-the browser. You can either upload an audio file or use the **Record audio**
-button to capture speech from your microphone.
+the browser. Use the **Record audio** button to capture speech from your
+microphone.
 
 ## Testing the OpenAI API
 

@@ -29,7 +29,7 @@ def record() -> str | dict:
     audio_file = request.files.get('audio')
     if not audio_file:
         return jsonify({'message': 'No audio received'}), 400
-    language = request.form.get('language', 'en')
+    language = request.form.get('language', 'fr')
     fd, tmp = tempfile.mkstemp(suffix='.webm')
     os.close(fd)
     save_path = Path(tmp)
@@ -60,7 +60,7 @@ def query() -> str | dict:
         return render_template('query.html')
     if 'audio' in request.files:
         audio_file = request.files['audio']
-        language = request.form.get('language', 'en')
+        language = request.form.get('language', 'fr')
         fd, tmp = tempfile.mkstemp(suffix='.webm')
         os.close(fd)
         save_path = Path(tmp)
