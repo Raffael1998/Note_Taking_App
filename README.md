@@ -2,11 +2,14 @@
 
 This project is a simple Python application that records voice notes, summarizes them using an LLM (such as OpenAI's GPT), and saves the summarized notes with a timestamp. You can also query existing notes using natural language.
 
+The application defaults to the `gpt-4.1-nano` model for all LLM calls.
+
 ## Requirements
 
 - Python 3.10+
 - `openai` for interacting with the LLM
 - `speechrecognition` for voice input
+- `pyaudio` for microphone access
 - `python-dotenv` for loading environment variables
 
 Install dependencies with:
@@ -14,6 +17,10 @@ Install dependencies with:
 ```bash
 pip install .
 ```
+
+If the installation fails on Windows, download a prebuilt PyAudio wheel from
+[the unofficial binaries site](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
+and install it with `pip install <wheel-filename>`.
 
 The `pip install` command will create `build/` and `*.egg-info` folders. These
 are ignored by Git via `.gitignore` and can be safely deleted if desired.

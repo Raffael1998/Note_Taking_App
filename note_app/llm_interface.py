@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 class LLMInterface:
     """Interface to interact with an LLM, e.g. OpenAI GPT."""
 
-    model: str = "gpt-3.5-turbo"
+    model: str = "gpt-4.1-nano"
 
     def __post_init__(self) -> None:
         load_dotenv()
