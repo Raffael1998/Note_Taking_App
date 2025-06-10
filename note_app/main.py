@@ -34,6 +34,13 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     record_parser = subparsers.add_parser("record", help="Record a new voice note")
+    record_parser.add_argument(
+        "--language",
+        "-l",
+        choices=["en", "fr"],
+        default="en",
+        help="Recording language: en or fr",
+    )
 
     query_parser = subparsers.add_parser("query", help="Query existing notes")
     query_parser.add_argument("prompt", help="Question about your notes")
@@ -42,7 +49,8 @@ def main() -> None:
 
     llm = LLMInterface()
     notes = NoteManager()
-    recorder = VoiceRecorder()
+    language_code = "fr-FR" if getattr(args, "language", "en") == "fr" else "en-US"
+    recorder = VoiceRecorder(language=language_code)
 
     commands: dict[str, Callable[..., None]] = {
         "record": lambda: record_note(llm, notes, recorder),
