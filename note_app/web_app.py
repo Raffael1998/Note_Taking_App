@@ -45,7 +45,8 @@ def record() -> str | dict:
         category = llm.infer_category(text, load_categories())
         notes.add_note(summary, category=category)
         message = f"Note added: [{category}] {summary}"
-        return jsonify({'message': message})
+        debug = f"Transcribed text: {text}"
+        return jsonify({'message': message, 'debug': debug})
     except Exception as exc:
         return jsonify({'message': str(exc)}), 500
     finally:
@@ -84,9 +85,13 @@ def query() -> str | dict:
 
     note_text = notes.read_notes()
     if not note_text.strip():
-        return jsonify({'result': 'No notes found'})
+        return jsonify({'result': 'No notes found', 'debug': f'Query text: {query_text}'})
+
     result = llm.query_notes(note_text, query_text)
-    return jsonify({'result': result})
+    if not result.strip():
+        return jsonify({'result': 'No matching notes found', 'debug': f'Query text: {query_text}'})
+
+    return jsonify({'result': result, 'debug': f'Query text: {query_text}'})
 
 
 def _edit_file(path: Path, content: str | None) -> str:
