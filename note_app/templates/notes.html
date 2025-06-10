@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2 class="mt-4">Edit Notes</h2>
+<form method="post">
+  <div class="mb-3">
+    <textarea name="content" class="form-control" rows="15">{{ content }}</textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">Save</button>
+</form>
+{% endblock %}
