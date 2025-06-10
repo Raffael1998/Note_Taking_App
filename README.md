@@ -87,7 +87,8 @@ streamlit run note_app/streamlit_app.py
 
 Open the provided URL in your browser. The interface offers tabs to record new
 notes, query existing ones and edit `notes.txt` or `categories.txt` directly in
-the browser.
+the browser. You can either upload an audio file or use the **Record audio**
+button to capture speech from your microphone.
 
 ## Testing the OpenAI API
 
