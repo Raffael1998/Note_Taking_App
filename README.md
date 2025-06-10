@@ -79,23 +79,15 @@ control how your notes are classified.
 
 ## Web Interface
 
-You can run a simple web interface using Flask:
+You can run a simple web interface using **Streamlit**:
 
 ```bash
-python -m note_app.web_app
+streamlit run note_app/streamlit_app.py
 ```
 
-Open <http://localhost:5000> in your browser. Use the language selector in the
-navigation bar to choose between English and French transcription. The main page
-lets you record notes or voice queries directly without navigating to a new
-screen. Click once to start recording and again to stop. While recording the
-button turns red and shows "Recording...".
-
-The sidebar still provides pages to edit `notes.txt` and `categories.txt`
-directly in the browser.
-
-The sidebar lets you edit `notes.txt` and `categories.txt` directly in the
-browser. The layout uses Bootstrap so it works well on mobile devices.
+Open the provided URL in your browser. The interface offers tabs to record new
+notes, query existing ones and edit `notes.txt` or `categories.txt` directly in
+the browser.
 
 ## Testing the OpenAI API
 
