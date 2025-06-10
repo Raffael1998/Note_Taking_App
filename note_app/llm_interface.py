@@ -4,6 +4,7 @@ import os
 from dataclasses import dataclass
 
 import openai
+from dotenv import load_dotenv
 
 
 @dataclass
@@ -13,6 +14,7 @@ class LLMInterface:
     model: str = "gpt-3.5-turbo"
 
     def __post_init__(self) -> None:
+        load_dotenv()
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise EnvironmentError("OPENAI_API_KEY environment variable not set")

@@ -1,10 +1,12 @@
 import os
 
 import openai
+from dotenv import load_dotenv
 
 
 def main() -> None:
     """Make a simple call to the OpenAI API and print the response."""
+    load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY environment variable not set")
