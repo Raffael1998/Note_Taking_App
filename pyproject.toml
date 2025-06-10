@@ -14,5 +14,6 @@ dependencies = [
     "PyAudio>=0.2.14",
     "python-dotenv>=1.0.0",
     "Flask>=2.2.0",
+    "streamlit>=1.30.0",
 ]
 
