@@ -17,3 +17,9 @@ dependencies = [
     "streamlit>=1.30.0",
 ]
 
+[tool.setuptools]
+packages = ["note_app"]
+
+[tool.poetry]
+package-mode = false
+
