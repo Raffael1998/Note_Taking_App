@@ -35,10 +35,25 @@ class LLMInterface:
         )
         return response.choices[0].message.content.strip()
 
-    def query_notes(self, notes: str, query: str) -> str:
-        """Return only lines from notes relevant to the query."""
+    def infer_category(self, text: str) -> str:
+        """Return a short category describing the text."""
         prompt = (
-            "You are a note assistant. Given the following notes, return only the lines that are relevant to the user's query."
+            "Provide a concise category for the following note. "
+            "Respond with only a short phrase." 
+        )
+        messages = [
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": text},
+        ]
+        response = self.client.chat.completions.create(
+            model=self.model, messages=messages
+        )
+        return response.choices[0].message.content.strip()
+
+    def query_notes(self, notes: str, query: str) -> str:
+        """Return full note lines, with timestamps and categories, relevant to the query."""
+        prompt = (
+            "You are a note assistant. Given the following notes, return only the full original lines (including date and category) that are relevant to the user's query."
         )
         messages = [
             {"role": "system", "content": prompt},
