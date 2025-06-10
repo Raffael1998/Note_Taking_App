@@ -9,8 +9,8 @@ description = "AI voice note taking application"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "openai",
-    "SpeechRecognition",
-    "python-dotenv",
+    "openai>=1.0.0",
+    "SpeechRecognition>=3.10.0",
+    "python-dotenv>=1.0.0",
 ]
 

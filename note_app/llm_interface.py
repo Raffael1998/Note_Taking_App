@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 
@@ -18,7 +18,7 @@ class LLMInterface:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise EnvironmentError("OPENAI_API_KEY environment variable not set")
-        openai.api_key = api_key
+        self.client = OpenAI(api_key=api_key)
 
     def summarize(self, text: str) -> str:
         """Summarize raw text into a short note."""
@@ -30,8 +30,10 @@ class LLMInterface:
             {"role": "system", "content": prompt},
             {"role": "user", "content": text},
         ]
-        response = openai.ChatCompletion.create(model=self.model, messages=messages)
-        return response.choices[0].message["content"].strip()
+        response = self.client.chat.completions.create(
+            model=self.model, messages=messages
+        )
+        return response.choices[0].message.content.strip()
 
     def query_notes(self, notes: str, query: str) -> str:
         """Return only lines from notes relevant to the query."""
@@ -42,5 +44,7 @@ class LLMInterface:
             {"role": "system", "content": prompt},
             {"role": "user", "content": f"Notes:\n{notes}\nQuery: {query}"},
         ]
-        response = openai.ChatCompletion.create(model=self.model, messages=messages)
-        return response.choices[0].message["content"].strip()
+        response = self.client.chat.completions.create(
+            model=self.model, messages=messages
+        )
+        return response.choices[0].message.content.strip()

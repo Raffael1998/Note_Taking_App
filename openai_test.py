@@ -1,6 +1,6 @@
 import os
 
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 
@@ -10,13 +10,12 @@ def main() -> None:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY environment variable not set")
-    openai.api_key = api_key
-
-    response = openai.ChatCompletion.create(
+    client = OpenAI(api_key=api_key)
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": "Hello"}],
     )
-    print(response.choices[0].message["content"].strip())
+    print(response.choices[0].message.content.strip())
 
 
 if __name__ == "__main__":
