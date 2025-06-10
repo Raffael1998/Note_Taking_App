@@ -3,7 +3,10 @@ from __future__ import annotations
 from threading import Event, Thread
 from typing import List
 
+import os
 import speech_recognition as sr
+from dotenv import load_dotenv
+from openai import OpenAI
 
 
 class VoiceRecorder:
@@ -13,6 +16,11 @@ class VoiceRecorder:
         self.recognizer = sr.Recognizer()
         self.save_path = save_path
         self.language = language
+        load_dotenv()
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise EnvironmentError("OPENAI_API_KEY environment variable not set")
+        self.client = OpenAI(api_key=api_key)
 
     def _record_audio(self) -> sr.AudioData:
         """Record audio after the user presses Enter to start and stop."""
@@ -58,12 +66,15 @@ class VoiceRecorder:
 
     def record_text(self) -> str:
         """Record from the microphone and return transcribed text."""
-        audio = self._record_audio()
+        self._record_audio()
         try:
-            text = self.recognizer.recognize_google(audio, language=self.language)
+            with open(self.save_path, "rb") as file:
+                lang = self.language.split("-")[0]
+                response = self.client.audio.transcriptions.create(
+                    model="whisper-1", file=file, language=lang
+                )
+            text = response.text.strip()
             print(f"[DEBUG] Recognized text: {text}")
             return text
-        except sr.UnknownValueError:
-            return ""
-        except sr.RequestError as exc:
+        except Exception as exc:
             raise RuntimeError(f"Speech recognition failed: {exc}")

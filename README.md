@@ -4,14 +4,14 @@ This project is a simple Python application that records voice notes, summarizes
 
 The application defaults to the `gpt-4.1-nano` model for all LLM calls.
 When recording or querying by voice you can choose between English and French
-speech recognition. Use the `--language` option with either `en` (default) or
-`fr`.
+transcription using OpenAI's Whisper API. Use the `--language` option with
+either `en` (default) or `fr`.
 
 ## Requirements
 
 - Python 3.10+
-- `openai` for interacting with the LLM
-- `speechrecognition` for voice input
+ - `openai` for interacting with the LLM and transcribing audio
+ - `speechrecognition` for microphone input
 - `pyaudio` for microphone access
 - `python-dotenv` for loading environment variables
 
