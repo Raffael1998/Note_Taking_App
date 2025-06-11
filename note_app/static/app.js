@@ -48,7 +48,7 @@ function setupRecorder(buttonId, endpoint, resultId) {
       };
       mediaRecorder.start();
       btn.dataset.original = btn.textContent;
-      btn.textContent = 'Recording... Press again to stop';
+      btn.textContent = 'Recording... Click again to stop and send';
       btn.classList.add('btn-danger');
     } else {
       btn.classList.remove('btn-danger');
