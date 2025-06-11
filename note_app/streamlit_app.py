@@ -2,6 +2,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 # Ensure the project root is on the Python path when running via
 # ``streamlit run note_app/streamlit_app.py``. Streamlit executes the script
@@ -11,6 +12,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import streamlit as st
+import streamlit_mic_recorder as mic
 
 from note_app.llm_interface import LLMInterface
 from note_app.note_manager import NoteManager
@@ -26,14 +28,18 @@ st.set_page_config(page_title="AI Note App")
 st.title("AI Voice Note App")
 
 
-def transcribe_audio(uploaded_file: Path | None, language: str) -> str:
-    """Return transcribed text from an uploaded audio file."""
-    if uploaded_file is None:
+def transcribe_audio(data: Any, language: str) -> str:
+    """Return transcribed text from uploaded data or raw bytes."""
+    if data is None:
         return ""
-    with tempfile.NamedTemporaryFile(
-        delete=False, suffix=Path(uploaded_file.name).suffix
-    ) as tmp:
-        tmp.write(uploaded_file.getbuffer())
+    if isinstance(data, bytes):
+        suffix = ".wav"
+        buffer = data
+    else:
+        suffix = Path(data.name).suffix
+        buffer = data.getbuffer()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(buffer)
         tmp_path = Path(tmp.name)
     try:
         with open(tmp_path, "rb") as f:
@@ -45,72 +51,68 @@ def transcribe_audio(uploaded_file: Path | None, language: str) -> str:
         tmp_path.unlink(missing_ok=True)
 
 
-record_tab, query_tab, notes_tab, categories_tab = st.tabs(
-    ["Record Note", "Query Notes", "Notes", "Categories"]
+language = st.selectbox("Language", ["en", "fr"], index=1)
+
+st.subheader("Send a note")
+note_audio = mic.mic_recorder(
+    start_prompt="Hold to record note",
+    stop_prompt="Release to send",
+    key="note_rec",
 )
+if note_audio:
+    text = transcribe_audio(note_audio["bytes"], language)
+    if text:
+        summary = llm.summarize(text)
+        category = llm.infer_category(text, load_categories())
+        notes.add_note(summary, category=category)
+        st.session_state["last_note"] = f"Note added: [{category}] {summary}"
+    else:
+        st.session_state["last_note"] = "Could not understand audio."
+if "last_note" in st.session_state:
+    st.info(st.session_state["last_note"])
 
+st.divider()
 
-with record_tab:
-    st.header("Record a new note")
-    language = st.selectbox("Language", ["en", "fr"], index=1)
-    mic_audio = st.audio_input("Record audio")
-    text_input = st.text_area("Or enter text")
-    if st.button("Add Note"):
-        if mic_audio:
-            text = transcribe_audio(mic_audio, language)
+st.subheader("Search notes")
+query_audio = mic.mic_recorder(
+    start_prompt="Hold to record query",
+    stop_prompt="Release to search",
+    key="query_rec",
+)
+if query_audio:
+    query = transcribe_audio(query_audio["bytes"], language)
+    if query:
+        note_text = notes.read_notes()
+        if not note_text.strip():
+            st.session_state["query_result"] = "No notes found"
         else:
-            text = text_input.strip()
-        if not text:
-            st.error("Please provide audio or text input")
-        else:
-            summary = llm.summarize(text)
-            category = llm.infer_category(text, load_categories())
-            notes.add_note(summary, category=category)
-            st.success(f"Note added: [{category}] {summary}")
+            result = llm.query_notes(note_text, query)
+            st.session_state["query_result"] = (
+                result if result.strip() else "No matching notes found"
+            )
+    else:
+        st.session_state["query_result"] = "Could not understand audio."
+if "query_result" in st.session_state:
+    st.text_area("Result", value=st.session_state["query_result"], height=200)
 
-
-with query_tab:
-    st.header("Query notes")
-    language = st.selectbox(
-        "Language", ["en", "fr"], index=1, key="query_lang"
-    )
-    mic_query = st.audio_input("Record query", key="query_mic")
-    query_text = st.text_input("Or type your query", key="query_text")
-    if st.button("Search"):
-        if mic_query:
-            query = transcribe_audio(mic_query, language)
-        else:
-            query = query_text.strip()
-        if not query:
-            st.error("Please provide audio or text input")
-        else:
-            note_text = notes.read_notes()
-            if not note_text.strip():
-                st.warning("No notes found")
-            else:
-                result = llm.query_notes(note_text, query)
-                st.text_area("Result", value=result, height=200)
-
-
-with notes_tab:
-    st.header("Edit notes.txt")
+with st.expander("Edit notes.txt"):
     content = Path("notes.txt").read_text(encoding="utf-8")
-    edited = st.text_area("Notes", value=content, height=300)
+    edited = st.text_area("Notes", value=content, height=300, key="notes_edit")
     if st.button("Save Notes"):
         Path("notes.txt").write_text(
             edited.replace("\r\n", "\n"), encoding="utf-8"
         )
         st.success("Notes saved")
 
-
-with categories_tab:
-    st.header("Edit categories.txt")
+with st.expander("Edit categories.txt"):
     content = Path("categories.txt").read_text(encoding="utf-8")
     edited = st.text_area(
-        "Categories", value=content, height=300, key="cat_text"
+        "Categories", value=content, height=300, key="cat_edit"
     )
     if st.button("Save Categories"):
         Path("categories.txt").write_text(
             edited.replace("\r\n", "\n"), encoding="utf-8"
         )
         st.success("Categories saved")
+
+
