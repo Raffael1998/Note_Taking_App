@@ -27,6 +27,26 @@ recorder = VoiceRecorder()
 st.set_page_config(page_title="AI Note App")
 st.title("AI Voice Note App")
 
+# Inject custom styles and fonts
+st.markdown(
+    """
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+        button.myButton {
+            border-radius: 30px;
+            font-weight: 600;
+            color: #fff;
+            border: none;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 def transcribe_audio(data: Any, language: str) -> str:
     """Return transcribed text from uploaded data or raw bytes."""
@@ -55,8 +75,8 @@ language = st.selectbox("Language", ["en", "fr"], index=1)
 
 st.subheader("Send a note")
 note_audio = mic.mic_recorder(
-    start_prompt="Hold to record note",
-    stop_prompt="Release to send",
+    start_prompt="Click to record note",
+    stop_prompt="Click again to stop and save",
     key="note_rec",
 )
 if note_audio:
@@ -75,8 +95,8 @@ st.divider()
 
 st.subheader("Search notes")
 query_audio = mic.mic_recorder(
-    start_prompt="Hold to record query",
-    stop_prompt="Release to search",
+    start_prompt="Click to record query",
+    stop_prompt="Click again to search",
     key="query_rec",
 )
 if query_audio:
@@ -94,6 +114,25 @@ if query_audio:
         st.session_state["query_result"] = "Could not understand audio."
 if "query_result" in st.session_state:
     st.text_area("Result", value=st.session_state["query_result"], height=200)
+
+# Color-code the microphone buttons after they are rendered
+st.markdown(
+    """
+    <script>
+    function styleButtons() {
+      const btns = document.querySelectorAll('button.myButton');
+      if (btns.length >= 2) {
+        btns[0].style.backgroundColor = '#ff6b6b';
+        btns[1].style.backgroundColor = '#1e90ff';
+      } else {
+        setTimeout(styleButtons, 100);
+      }
+    }
+    styleButtons();
+    </script>
+    """,
+    unsafe_allow_html=True,
+)
 
 with st.expander("Edit notes.txt"):
     content = Path("notes.txt").read_text(encoding="utf-8")

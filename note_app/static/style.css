@@ -1,0 +1,30 @@
+body {
+  padding-top: 56px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f4f8;
+}
+.sidebar {
+  min-height: 100vh;
+}
+.btn-record {
+  background-color: #ff6b6b;
+  border-radius: 30px;
+  font-weight: 600;
+  color: #fff;
+  border: none;
+}
+.btn-record:hover {
+  background-color: #ff8787;
+  color: #fff;
+}
+.btn-query {
+  background-color: #1e90ff;
+  border-radius: 30px;
+  font-weight: 600;
+  color: #fff;
+  border: none;
+}
+.btn-query:hover {
+  background-color: #58a8ff;
+  color: #fff;
+}
