@@ -50,7 +50,7 @@ def main() -> None:
 
     record_parser = subparsers.add_parser("record", help="Save a new note")
     record_parser.add_argument("--text", help="Note text")
-    record_parser.add_argument("--language", "-l", default="en", help="Note language")
+    record_parser.add_argument("--language", "-l", default="fr", help="Note language")
     record_parser.add_argument("--voice", action="store_true", help="(Not yet implemented)")
 
     query_parser = subparsers.add_parser("query", help="Query saved memories")
@@ -59,7 +59,7 @@ def main() -> None:
 
     auto_parser = subparsers.add_parser("auto", help="LLM routes note vs query")
     auto_parser.add_argument("--text", help="Input text")
-    auto_parser.add_argument("--language", "-l", default="en", help="Input language")
+    auto_parser.add_argument("--language", "-l", default="fr", help="Input language")
     auto_parser.add_argument("--voice", action="store_true", help="(Not yet implemented)")
 
     args = parser.parse_args()

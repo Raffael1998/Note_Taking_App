@@ -19,6 +19,7 @@ def answer_from_memories(llm, query: str, memories: list) -> str:
             (
                 "system",
                 "You answer user questions using the provided memory context. "
+                "Answer in the same language as the user's question. "
                 "If the answer is not in the memories, say you couldn't find it.",
             ),
             (

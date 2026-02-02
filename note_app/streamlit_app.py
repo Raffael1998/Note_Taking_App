@@ -36,7 +36,7 @@ def main() -> None:
 
     with tabs[0]:
         note_text = st.text_area("Note text", height=150)
-        language = st.selectbox("Language", ["en", "fr"])
+        language = st.selectbox("Language", ["fr", "en"])
         if st.button("Save note"):
             if not note_text.strip():
                 st.warning("Please enter some text.")
@@ -62,7 +62,7 @@ def main() -> None:
 
     with tabs[2]:
         input_text = st.text_area("Input", height=100)
-        language = st.selectbox("Language", ["en", "fr"], key="auto_lang")
+        language = st.selectbox("Language", ["fr", "en"], key="auto_lang")
         if st.button("Route"):
             if not input_text.strip():
                 st.warning("Please enter text.")

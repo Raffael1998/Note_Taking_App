@@ -21,8 +21,12 @@ def build_memory_extractor(llm):
             (
                 "human",
                 "Note:\n{note}\n\n"
+                "Output language: {language}\n"
+                "Category must be ONE of: Administratif, Achat, Sante, Travail, "
+                "Personnel, Finances, Voyage, Maison, Etudes, Autre.\n"
                 "Constraints:\n"
                 "- Use concise summary (max 3 sentences).\n"
+                "- Summary, category, tags, and entities MUST be in the output language.\n"
                 "- Choose a single category label.\n"
                 "- Tags and entities should be short strings.\n\n"
                 "{format_instructions}",
@@ -49,6 +53,7 @@ def extract_memory(llm, note_text: str, source: str, language: str) -> MemoryRec
     parsed = extractor.invoke(
         {
             "note": note_text,
+            "language": language,
             "format_instructions": parser.get_format_instructions(),
         }
     )
