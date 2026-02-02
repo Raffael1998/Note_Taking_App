@@ -1,7 +1,7 @@
 import os
 
-from openai import OpenAI
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 
 
 def main() -> None:
@@ -10,12 +10,10 @@ def main() -> None:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY environment variable not set")
-    client = OpenAI(api_key=api_key)
-    response = client.chat.completions.create(
-        model="gpt-4.1-nano",
-        messages=[{"role": "user", "content": "Hello"}],
-    )
-    print(response.choices[0].message.content.strip())
+    model = os.getenv("NOTE_APP_LLM_MODEL", "gpt-4.1-mini")
+    llm = ChatOpenAI(model=model, temperature=0)
+    response = llm.invoke("Hello")
+    print(response.content.strip())
 
 
 if __name__ == "__main__":
